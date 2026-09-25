@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Xe Ôm Trường Lê - Đỉnh Cao Công Nghệ</title>
+    
+    <!-- Nhúng thư viện bản đồ -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+        /* Phông chữ hiện đại và Nền dải màu Gradient rực rỡ */
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
+        
+        body { 
+            font-family: 'Quicksand', sans-serif; 
+            margin: 0; 
+            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%); /* Màu xanh cyan công nghệ */
+            display: flex; 
+            justify-content: center; 
+            height: 100vh;
+        }
+
+        .mobile-frame { 
+            width: 100%; 
+            max-width: 420px; 
+            background: #fff; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header mang tên Chủ sở hữu */
+        .header {
+            background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);
+            z-index: 10;
+        }
+        .header span { font-size: 12px; display: block; font-weight: 500; opacity: 0.9; }
+
+        #map { flex: 1; width: 100%; z-index: 1; }
+
+        /* Khối đặt xe phong cách kính mờ (Glassmorphism) */
+        .booking-panel { 
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 25px 20px; 
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+            box-sizing: border-box;
+            z-index: 10; 
+            box-shadow: 0 -10px 25px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #333; margin-bottom: 8px;}
+        .input-group select, .input-group input { 
+            width: 100%; padding: 14px; 
+            border: 2px solid #eee; border-radius: 12px; 
+            font-size: 16px; font-family: 'Quicksand'; outline: none;
+            transition: 0.3s;
+        }
+        .input-group select:focus { border-color: #00C9FF; box-shadow: 0 0 8px rgba(0,201,255,0.3); }
+
+        .price-box { 
+            display: none; 
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: center; 
+            color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .price-box p { margin: 0; font-size: 16px; font-weight: 700; }
+        .price-text { font-size: 28px; font-weight: 700; margin-top: 5px; }
+
+        .btn-book { 
+            width: 100%; padding: 16px; 
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%); 
+            color: white; border: none; border-radius: 12px; 
+            font-size: 18px; font-weight: 700; cursor: pointer; 
+            box-shadow: 0 5px 15px rgba(56,239,125,0.4);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-book:active { transform: scale(0.98); }
+
+        /* Thẻ thông tin Tài xế Lê Văn Trường */
+        .driver-card {
+            display: none;
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            border: 2px solid #00C9FF;
+            animation: popUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popUp { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .driver-avatar { width: 80px; height: 80px; background: #00C9FF; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .driver-name { font-size: 22px; font-weight: 700; color: #333; margin: 0; }
+        .driver-rating { color: #f39c12; font-size: 16px; margin: 5px 0; }
+        .driver-vehicle { background: #eee; padding: 5px 10px; border-radius: 20px; display: inline-block; font-size: 14px; color: #555; font-weight: 700; }
+
+        .leaflet-routing-container { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="mobile-frame">
+        <!-- Header có tên Chủ sở hữu -->
+        <div class="header">
+            🚀 XE ÔM CÔNG NGHỆ
+            <span>Chủ sở hữu: Lê Văn Trường</span>
+        </div>
+
+        <div id="map"></div>
+
+        <div class="booking-panel" id="bookingPanel">
+            <!-- Thẻ Tài xế (Sẽ hiện ra khi bấm đặt xe) -->
+            <div class="driver-card" id="driverCard">
+                <div class="driver-avatar">👨‍✈️</div>
+                <h3 class="driver-name">Tài xế: Lê Văn Trường</h3>
+                <p class="driver-rating">⭐⭐⭐⭐⭐ (5.0) - Trùm lạng lách</p>
+                <div class="driver-vehicle">🏍️ Honda Wave Alpha - 29V1 999.99</div>
+                <p style="color: #27ae60; font-weight: 700; margin-top: 10px;">Đang trên đường đến đón bạn!</p>
+            </div>
+
+            <div id="bookingForm">
+                <div class="input-group">
+                    <label>📍 Điểm đón:</label>
+                    <input type="text" value="Ký túc xá ĐHQG Hà Nội" readonly>
+                </div>
+                
+                <div class="input-group">
+                    <label>🏁 Chọn điểm đến:</label>
+                    <select id="destination" onchange="calculateRoute()">
+                        <option value="">-- Chạm để chọn nơi đến --</option>
+                        <option value="21.0130,105.5265">🏫 Đại học FPT</option>
+                        <option value="20.9850,105.5290">🚦 Ngã ba Hòa Lạc</option>
+                        <option value="20.9900,105.5280">⛽ Cây xăng 239</option>
+                        <option value="21.0160,105.5150">🍜 Quán bún chả đầu ngõ</option>
+                    </select>
+                </div>
+
+                <div id="info-box" class="price-box">
+                    <p>Quãng đường: <span id="distance-km">0</span> km</p>
+                    <div class="price-text" id="fare-price">0 đ</div>
+                </div>
+
+                <button class="btn-book" id="btnBook" onclick="bookRide()" style="display: none;">Xác nhận đặt xe</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const KTX_LAT = 21.0028;
+        const KTX_LNG = 105.5244;
+
+        var map = L.map('map', { zoomControl: false }).setView([KTX_LAT, KTX_LNG], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+        // Icon tùy chỉnh cho điểm đón
+        var pickupIcon = L.divIcon({ html: '📍', className: '', iconSize: [30, 30], iconAnchor: [15, 30] });
+        L.marker([KTX_LAT, KTX_LNG], {icon: pickupIcon}).addTo(map);
+
+        var routingControl = null;
+
+        function calculateRoute() {
+            var destValue = document.getElementById('destination').value;
+            var infoBox = document.getElementById('info-box');
+            var btnBook = document.getElementById('btnBook');
+
+            if (!destValue) {
+                infoBox.style.display = 'none';
+                btnBook.style.display = 'none';
+                if (routingControl) map.removeControl(routingControl);
+                map.setView([KTX_LAT, KTX_LNG], 15);
+                return;
+            }
+
+            var coords = destValue.split(',');
+            var destLat = parseFloat(coords[0]);
+            var destLng = parseFloat(coords[1]);
+
+            if (routingControl) map.removeControl(routingControl);
+
+            // Vẽ đường màu Gradient rực rỡ
+            routingControl = L.Routing.control({
+                waypoints: [ L.latLng(KTX_LAT, KTX_LNG), L.latLng(destLat, destLng) ],
+                lineOptions: { styles: [{ color: '#FF416C', opacity: 0.8, weight: 6 }] },
+                routeWhileDragging: false, addWaypoints: false, fitSelectedRoutes: true, show: false
+            }).addTo(map);
+
+            routingControl.on('routesfound', function(e) {
+                var summary = e.routes[0].summary;
+                var distanceKm = (summary.totalDistance / 1000).toFixed(1);
+                
+                var price = 15000; 
+                if(distanceKm > 2) price += Math.ceil(distanceKm - 2) * 5000;
+
+                infoBox.style.display = 'block';
+                btnBook.style.display = 'block';
+                document.getElementById('distance-km').innerText = distanceKm;
+                document.getElementById('fare-price').innerText = price.toLocaleString('vi-VN') + ' đ';
+            });
+        }
+
+        // Logic khi bấm đặt xe - Chỉ định trực tiếp tài xế Lê Văn Trường
+        function bookRide() {
+            var btnBook = document.getElementById('btnBook');
+            btnBook.innerText = "⏳ Đang quét vệ tinh tìm tài xế...";
+            btnBook.style.background = "#f39c12";
+
+            // Giả lập thời gian chờ 2 giây để quét hệ thống
+            setTimeout(() => {
+                document.getElementById('bookingForm').style.display = 'none';
+                document.getElementById('driverCard').style.display = 'block';
+                
+                // Mở rộng khung panel lên để hiển thị đẹp hơn
+                document.getElementById('bookingPanel').style.paddingBottom = "40px";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
