@@ -48,11 +48,12 @@
             max-width: 420px; 
             background: #fff; 
             height: 100vh; 
-            display: none; /* Ẩn đi để hiện màn Đăng nhập trước */
+            display: none; 
             flex-direction: column; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
             position: relative;
             z-index: 100;
+            overflow: hidden;
         }
 
         .header {
@@ -70,7 +71,7 @@
 
         #map { flex: 1; width: 100%; z-index: 1; }
 
-        /* BẢNG ĐẶT XE KÍNH MỜ */
+        /* BẢNG ĐẶT XE */
         .booking-panel { 
             position: absolute; 
             bottom: 0; 
@@ -84,7 +85,6 @@
             box-sizing: border-box;
             z-index: 10; 
             color: white;
-            transition: all 0.3s ease;
         }
 
         .input-group { margin-bottom: 15px; }
@@ -113,24 +113,69 @@
             color: white; border: none; border-radius: 12px; 
             font-size: 18px; font-weight: 700; cursor: pointer; 
             box-shadow: 0 5px 15px rgba(255,65,108,0.4);
-            text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* --- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ --- */
-        .auth-container {
-            width: 100%;
-            max-width: 380px;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.2);
-            z-index: 100;
+        /* NÚT ZALO HỖ TRỢ BÊN GÓC PHẢI */
+        .zalo-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            background-color: #0068FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-weight: 900;
+            font-size: 14px;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 104, 255, 0.5);
+            z-index: 1000;
+            animation: pulseZalo 2s infinite;
         }
-        .auth-header { text-align: center; font-size: 26px; font-weight: 700; margin-bottom: 20px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        @keyframes pulseZalo {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 104, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 104, 255, 0); }
+        }
+
+        /* HIỆU ỨNG CÁ SẤU ĐỚP CÁ */
+        #crocAnimScreen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            display: none;
+        }
+        #animFish {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            animation: fishDangle 0.5s infinite alternate;
+        }
+        @keyframes fishDangle { from {transform: translateX(-50%) rotate(-10deg);} to {transform: translateX(-50%) rotate(10deg);} }
+        #animCroc {
+            position: absolute;
+            bottom: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 100px;
+            transition: bottom 0.3s ease-in;
+        }
+
+        /* MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */
+        .auth-container {
+            width: 100%; max-width: 380px; margin: auto;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+            padding: 30px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
+            z-index: 100; color: white; box-sizing: border-box;
+        }
+        .auth-header { text-align: center; font-size: 26px; font-weight: 700; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .auth-tabs { display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.2); }
         .auth-tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; transition: 0.3s; }
         .auth-tab.active { background: #00C9FF; color: #000; }
@@ -140,13 +185,11 @@
             background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3);
             border-radius: 10px; color: white; font-size: 16px; box-sizing: border-box; outline: none;
         }
-        .auth-form input::placeholder { color: #ddd; }
         .btn-auth {
             width: 100%; padding: 15px; background: #00C9FF; color: #000; border: none;
             border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,201,255,0.4);
         }
-
         .leaflet-routing-container { display: none !important; }
     </style>
 </head>
@@ -160,17 +203,20 @@
             <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">Đăng Ký</div>
         </div>
 
-        <!-- Form Đăng Nhập -->
         <div class="auth-form" id="formLogin">
             <input type="tel" id="loginPhone" placeholder="Số điện thoại" value="0987654321">
             <input type="password" id="loginPass" placeholder="Mật khẩu" value="123456">
             <button class="btn-auth" onclick="doLogin()">VÀO APP NGAY</button>
         </div>
 
-        <!-- Form Đăng Ký -->
         <div class="auth-form" id="formRegister" style="display: none;">
-            <input type="text" id="regName" placeholder="Họ và tên (VD: Lê Văn Trường)">
+            <input type="text" id="regName" placeholder="Họ và tên">
             <input type="tel" id="regPhone" placeholder="Số điện thoại">
+            <!-- Khu vực nhập mã OTP -->
+            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="regOTP" placeholder="Mã xác nhận" style="margin-bottom: 0; flex: 1;">
+                <button id="btnOTP" style="background: #FF416C; color: white; border: none; border-radius: 10px; padding: 0 15px; font-weight: bold; cursor: pointer; transition: 0.3s;" onclick="sendOTP()">Gửi mã</button>
+            </div>
             <input type="password" id="regPass" placeholder="Mật khẩu">
             <button class="btn-auth" onclick="doRegister()">TẠO TÀI KHOẢN</button>
         </div>
@@ -180,26 +226,35 @@
     <div class="mobile-frame" id="mainApp">
         <div class="header">
             🚀 BẢN ĐỒ VỆ TINH VIP
-            <span>Chủ sở hữu & Tài xế: Lê Văn Trường</span>
+            <span>Chủ sở hữu: Lê Văn Trường</span>
         </div>
 
         <div id="map"></div>
+
+        <!-- Khung hoạt ảnh cá sấu đớp mồi -->
+        <div id="crocAnimScreen">
+            <div id="animFish">🐟</div>
+            <div id="animCroc">🐊</div>
+        </div>
+
+        <!-- Nút liên kết Zalo hỗ trợ -->
+        <a href="https://zaloapp.com/qr/p/qc0rgkdipkkf" target="_blank" class="zalo-btn">Zalo</a>
 
         <div class="booking-panel" id="bookingPanel">
             <div class="input-group">
                 <label>📍 Chọn điểm đón:</label>
                 <select id="pickup" onchange="calculateRoute()">
                     <option value="">-- Chạm để chọn điểm đón --</option>
-                    <option value="gps" style="color: #00C9FF; font-weight: bold;">🛰️ Vị trí hiện tại của bạn (Định vị)</option>
+                    <option value="gps" style="color: #00C9FF; font-weight: bold;">🛰️ Vị trí hiện tại của bạn</option>
                     <option value="21.0028,105.5244">🏢 Kí túc xá B-C</option>
-                    <option value="21.0050,105.5230">🎓 Trường Đại học Việt Nhật</option>
+                    <option value="21.0050,105.5230">🎓 Trường Đại học Việt Nhật - Xã Hòa Lạc</option>
                     <option value="20.9900,105.5280">⛽ Cây xăng 239</option>
                     <option value="21.0045,105.5255">🏨 Nhà khách</option>
                     <option value="21.0060,105.5260">📚 Giảng đường HT1</option>
                     <option value="21.0062,105.5265">📚 Giảng đường HT2</option>
                     <option value="21.0064,105.5270">📚 Giảng đường HT3</option>
                     <option value="21.0066,105.5275">📚 Giảng đường HT4</option>
-                    <option value="21.0040,105.5270">💻 Trường Đại học Công nghệ (UET)</option>
+                    <option value="21.0040,105.5270">💻 Trường Đại học Công nghệ - xã Hòa Lạc</option>
                 </select>
             </div>
             
@@ -207,24 +262,31 @@
                 <label>🏁 Chọn điểm đến:</label>
                 <select id="dropoff" onchange="calculateRoute()">
                     <option value="">-- Chạm để chọn nơi đến --</option>
+                    <option value="21.0028,105.5244">🏢 Kí túc xá B-C</option>
+                    <option value="21.0050,105.5230">🎓 Trường Đại học Việt Nhật - Xã Hòa Lạc</option>
+                    <option value="20.9900,105.5280">⛽ Cây xăng 239</option>
+                    <option value="21.0045,105.5255">🏨 Nhà khách</option>
+                    <option value="21.0060,105.5260">📚 Giảng đường HT1</option>
+                    <option value="21.0062,105.5265">📚 Giảng đường HT2</option>
+                    <option value="21.0064,105.5270">📚 Giảng đường HT3</option>
+                    <option value="21.0066,105.5275">📚 Giảng đường HT4</option>
+                    <option value="21.0040,105.5270">💻 Trường Đại học Công nghệ - xã Hòa Lạc</option>
                     <option value="21.0010,105.5200">🏛️ Cổng chính Đại học Quốc gia</option>
                     <option value="21.0015,105.5280">⛩️ Cổng phụ Đại học Quốc gia</option>
-                    <option value="21.0130,105.5265">🏫 Đại học FPT</option>
-                    <option value="20.9850,105.5290">🚦 Ngã ba Hòa Lạc</option>
                 </select>
             </div>
 
             <div id="info-box" class="price-box">
-                <p>Khoảng cách chuẩn: <span id="distance-km">0</span> km</p>
+                <p>Khoảng cách: <span id="distance-km">0</span> km</p>
                 <div class="price-text" id="fare-price">0 đ</div>
             </div>
 
-            <button class="btn-book" id="btnBook" onclick="alert('Đã chốt đơn! Tài xế Lê Văn Trường đang xuất phát 🏍️')" style="display: none;">ĐẶT XE NGAY</button>
+            <button class="btn-book" id="btnBook" onclick="triggerCrocAnimation()" style="display: none;">ĐẶT XE NGAY</button>
         </div>
     </div>
 
     <script>
-        // --- 1. HIỆU ỨNG HOA ĐÀO RƠI ---
+        // --- 1. HOA ĐÀO RƠI ---
         function createPetals() {
             const petal = document.createElement('div');
             petal.innerHTML = '🌸';
@@ -236,13 +298,12 @@
         }
         setInterval(createPetals, 300);
 
-        // --- 2. LOGIC ĐĂNG NHẬP / ĐĂNG KÝ ---
+        // --- 2. LOGIC ĐĂNG KÝ / OTP ---
         function switchTab(tab) {
             document.getElementById('tabLogin').classList.remove('active');
             document.getElementById('tabRegister').classList.remove('active');
             document.getElementById('formLogin').style.display = 'none';
             document.getElementById('formRegister').style.display = 'none';
-            
             if(tab === 'login') {
                 document.getElementById('tabLogin').classList.add('active');
                 document.getElementById('formLogin').style.display = 'block';
@@ -252,34 +313,40 @@
             }
         }
 
-        function doLogin() {
-            let phone = document.getElementById('loginPhone').value;
-            if(phone.length < 9) { alert("Vui lòng nhập đúng số điện thoại!"); return; }
-            enterMainApp();
+        // Gửi lại mã OTP
+        function sendOTP() {
+            var phone = document.getElementById('regPhone').value;
+            if(phone.length < 9) { alert("Hãy nhập số điện thoại trước khi nhận mã!"); return; }
+            var btn = document.getElementById('btnOTP');
+            btn.innerText = "Đã gửi!";
+            btn.style.background = "#27ae60";
+            
+            // Giả lập sau 5 giây cho phép gửi lại
+            setTimeout(() => {
+                btn.innerText = "Gửi lại mã";
+                btn.style.background = "#FF416C";
+            }, 5000); 
         }
 
+        function doLogin() { enterMainApp(); }
+
         function doRegister() {
-            let name = document.getElementById('regName').value;
-            if(name === "") { alert("Vui lòng nhập họ và tên!"); return; }
-            alert("Đăng ký thành công tài khoản: " + name);
+            let otp = document.getElementById('regOTP').value;
+            if(otp === "") { alert("Vui lòng nhập mã xác nhận (OTP)!"); return; }
+            alert("Đăng ký thành công!");
             enterMainApp();
         }
 
         function enterMainApp() {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'flex';
-            // Cập nhật lại kích thước bản đồ khi hiện khung app
             setTimeout(() => { map.invalidateSize(); }, 300);
         }
 
-        // --- 3. BẢN ĐỒ VỆ TINH & ĐỊNH VỊ ---
-        // Khởi tạo bản đồ mặc định ở ĐHQG Hòa Lạc
+        // --- 3. BẢN ĐỒ VỆ TINH ---
         var map = L.map('map', { zoomControl: false }).setView([21.0028, 105.5244], 15);
-
-        // DÙNG LỚP BẢN ĐỒ VỆ TINH (SATELLITE HYBRID CỦA GOOGLE)
         L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-            maxZoom: 20,
-            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+            maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         }).addTo(map);
 
         var routingControl = null;
@@ -288,11 +355,9 @@
         function calculateRoute() {
             var pickupVal = document.getElementById('pickup').value;
             var dropoffVal = document.getElementById('dropoff').value;
-            
             var infoBox = document.getElementById('info-box');
             var btnBook = document.getElementById('btnBook');
 
-            // Nếu chưa chọn đủ cả đón và đến thì ẩn báo giá
             if (!pickupVal || !dropoffVal) {
                 infoBox.style.display = 'none';
                 btnBook.style.display = 'none';
@@ -300,12 +365,10 @@
                 return;
             }
 
-            // Hàm con để vẽ đường khi đã có tọa độ
             const drawMapRoute = (pLat, pLng, dLat, dLng) => {
                 if (routingControl) map.removeControl(routingControl);
                 if (pickupMarker) map.removeLayer(pickupMarker);
 
-                // Gắn Marker vệ tinh cho điểm đón
                 var icon = L.divIcon({ html: '🟢', className: '', iconSize: [25, 25] });
                 pickupMarker = L.marker([pLat, pLng], {icon: icon}).addTo(map).bindPopup("Điểm đón của bạn").openPopup();
 
@@ -331,7 +394,6 @@
             var dLat = parseFloat(dropCoords[0]);
             var dLng = parseFloat(dropCoords[1]);
 
-            // KIỂM TRA NẾU CHỌN TÍNH NĂNG ĐỊNH VỊ GPS
             if (pickupVal === 'gps') {
                 btnBook.innerText = "ĐANG LẤY TỌA ĐỘ GPS...";
                 btnBook.style.display = 'block';
@@ -344,19 +406,52 @@
                             btnBook.style.background = "linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%)";
                             drawMapRoute(position.coords.latitude, position.coords.longitude, dLat, dLng);
                         },
-                        (error) => {
-                            alert("Bạn chưa cấp quyền Vị trí cho trình duyệt! Vui lòng chọn điểm đón thủ công.");
-                            document.getElementById('pickup').value = ""; // reset
+                        () => {
+                            alert("Bạn chưa cấp quyền Vị trí cho trình duyệt!");
+                            document.getElementById('pickup').value = ""; 
                             btnBook.style.display = 'none';
                         }
                     );
-                } else {
-                    alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
                 }
             } else {
                 var pickupCoords = pickupVal.split(',');
                 drawMapRoute(parseFloat(pickupCoords[0]), parseFloat(pickupCoords[1]), dLat, dLng);
             }
+        }
+
+        // --- 4. HIỆU ỨNG CÁ SẤU ĐỚP CÁ KHI ĐẶT XE ---
+        function triggerCrocAnimation() {
+            var animScreen = document.getElementById('crocAnimScreen');
+            var croc = document.getElementById('animCroc');
+            var fish = document.getElementById('animFish');
+            
+            // Hiện lớp nền tối
+            animScreen.style.display = 'block';
+            croc.style.bottom = '-150px'; 
+            fish.style.display = 'block'; 
+            
+            // Cá sấu nhảy lên
+            setTimeout(() => {
+                croc.style.bottom = '35%'; 
+            }, 100);
+
+            // Đớp cá (Cá biến mất, icon cá sấu thay đổi)
+            setTimeout(() => {
+                fish.style.display = 'none'; 
+                croc.innerHTML = '🐊💦';
+            }, 400);
+
+            // Cá sấu rơi xuống
+            setTimeout(() => {
+                croc.style.bottom = '-150px'; 
+            }, 800);
+
+            // Ẩn hoạt ảnh và báo thành công
+            setTimeout(() => {
+                animScreen.style.display = 'none';
+                croc.innerHTML = '🐊'; // reset icon
+                alert('Đã chốt đơn! Tài xế Lê Văn Trường đang lao đến 🏍️💨');
+            }, 1200);
         }
     </script>
 </body>
