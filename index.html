@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Xe Ôm Trường Lê - Bản Vệ Tinh VIP</title>
     
-    <!-- Nhúng thư viện bản đồ Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
@@ -15,237 +14,170 @@
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap');
         
         body { 
-            font-family: 'Quicksand', sans-serif; 
-            margin: 0; 
+            font-family: 'Quicksand', sans-serif; margin: 0; 
             background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d); 
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            display: flex; 
-            justify-content: center; 
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            display: flex; justify-content: center; height: 100vh; overflow: hidden;
         }
 
-        @keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
-
-        /* HIỆU ỨNG HOA ĐÀO RƠI */
+        /* TỐI ƯU HIỆU NĂNG HOA ĐÀO: Thêm will-change để giảm lag */
         .petal {
-            position: absolute;
-            top: -10px;
-            font-size: 20px;
-            user-select: none;
-            pointer-events: none;
+            position: absolute; top: -10px; font-size: 18px; pointer-events: none;
             animation: fall linear infinite, sway ease-in-out infinite alternate;
-            z-index: 9999;
+            z-index: 9999; will-change: transform;
         }
-        @keyframes fall { to { top: 110vh; } }
-        @keyframes sway { from { transform: translateX(-20px) rotate(0deg); } to { transform: translateX(20px) rotate(360deg); } }
+        @keyframes fall { to { transform: translateY(110vh); } }
+        @keyframes sway { from { margin-left: -15px; } to { margin-left: 15px; } }
 
-        /* KHUNG ỨNG DỤNG ĐIỆN THOẠI */
         .mobile-frame { 
-            width: 100%; 
-            max-width: 420px; 
-            background: #fff; 
-            height: 100vh; 
-            display: none; 
-            flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            position: relative;
-            z-index: 100;
-            overflow: hidden;
+            width: 100%; max-width: 420px; background: #fff; height: 100vh; 
+            display: none; flex-direction: column; position: relative; z-index: 100; overflow: hidden;
         }
 
         .header {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            color: #00C9FF;
-            padding: 15px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: 700;
-            z-index: 10;
-            border-bottom: 2px solid #00C9FF;
+            background: rgba(0, 0, 0, 0.9); color: #00C9FF; padding: 15px;
+            text-align: center; font-size: 20px; font-weight: 700; z-index: 10; border-bottom: 2px solid #00C9FF;
         }
         .header span { font-size: 12px; display: block; font-weight: 500; color: #fff; }
 
-        #map { flex: 1; width: 100%; z-index: 1; }
+        #map { flex: 1; width: 100%; z-index: 1; background: #e5e3df; }
 
-        /* BẢNG ĐẶT XE */
         .booking-panel { 
-            position: absolute; 
-            bottom: 0; 
-            width: 100%; 
-            background: rgba(25, 25, 35, 0.9); 
-            backdrop-filter: blur(15px);
-            padding: 25px 20px; 
-            border-top: 2px solid #00C9FF;
-            border-top-left-radius: 25px;
-            border-top-right-radius: 25px;
-            box-sizing: border-box;
-            z-index: 10; 
-            color: white;
+            position: absolute; bottom: 0; width: 100%; 
+            background: rgba(25, 25, 35, 0.95); padding: 25px 20px; 
+            border-top: 2px solid #00C9FF; border-top-left-radius: 25px; border-top-right-radius: 25px;
+            box-sizing: border-box; z-index: 10; color: white;
         }
 
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #00C9FF; margin-bottom: 8px;}
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; font-weight: 700; color: #00C9FF; margin-bottom: 5px;}
         .input-group select { 
-            width: 100%; padding: 12px; 
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid #00C9FF; border-radius: 12px; 
-            font-size: 15px; font-family: 'Quicksand'; outline: none;
+            width: 100%; padding: 12px; background: #1a1a2e; color: white;
+            border: 1px solid #00C9FF; border-radius: 12px; font-size: 15px; font-family: 'Quicksand'; outline: none;
         }
-        .input-group select option { background: #1a1a2e; color: white; }
 
         .price-box { 
-            display: none; 
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            padding: 15px; border-radius: 15px; margin-bottom: 15px; text-align: center; 
-            color: #fff; box-shadow: 0 4px 15px rgba(56,239,125,0.4);
+            display: none; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 10px; border-radius: 12px; margin-bottom: 10px; text-align: center; color: #fff; 
         }
-        .price-box p { margin: 0; font-size: 16px; font-weight: 700; }
-        .price-text { font-size: 28px; font-weight: 700; margin-top: 5px; }
+        .price-box p { margin: 0; font-size: 14px; font-weight: 700; }
+        .price-text { font-size: 24px; font-weight: 700; margin-top: 5px; }
 
         .btn-book { 
-            width: 100%; padding: 16px; 
-            background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%); 
-            color: white; border: none; border-radius: 12px; 
-            font-size: 18px; font-weight: 700; cursor: pointer; 
-            box-shadow: 0 5px 15px rgba(255,65,108,0.4);
+            width: 100%; padding: 15px; background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%); 
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; 
         }
 
-        /* NÚT ZALO HỖ TRỢ BÊN GÓC PHẢI */
         .zalo-btn {
-            position: absolute;
-            bottom: 25px;
-            right: 15px;
-            width: 50px;
-            height: 50px;
-            background-color: #0068FF;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 900;
-            font-size: 14px;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(0, 104, 255, 0.5);
-            z-index: 1000;
-            animation: pulseZalo 2s infinite;
+            position: absolute; bottom: 350px; right: 15px; width: 50px; height: 50px;
+            background-color: #0068FF; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 900; font-size: 12px; text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 104, 255, 0.5); z-index: 1000; animation: pulseZalo 2s infinite;
         }
-        @keyframes pulseZalo {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 104, 255, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 104, 255, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 104, 255, 0); }
-        }
+        @keyframes pulseZalo { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
 
-        /* HIỆU ỨNG CÁ SẤU ĐỚP CÁ */
-        #crocAnimScreen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 2000;
-            display: none;
-        }
-        #animFish {
-            position: absolute;
-            top: 30%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 60px;
-            animation: fishDangle 0.5s infinite alternate;
-        }
-        @keyframes fishDangle { from {transform: translateX(-50%) rotate(-10deg);} to {transform: translateX(-50%) rotate(10deg);} }
-        #animCroc {
-            position: absolute;
-            bottom: -150px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 100px;
-            transition: bottom 0.3s ease-in;
-        }
+        /* CÁ SẤU ĐỚP CÁ */
+        #crocAnimScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; display: none; }
+        #animFish { position: absolute; top: 30%; left: 50%; transform: translateX(-50%); font-size: 60px; animation: fishDangle 0.5s infinite alternate; }
+        @keyframes fishDangle { from {transform: translateX(-50%) rotate(-15deg);} to {transform: translateX(-50%) rotate(15deg);} }
+        #animCroc { position: absolute; bottom: -150px; left: 50%; transform: translateX(-50%); font-size: 100px; transition: bottom 0.2s ease-in; }
 
-        /* MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */
+        /* MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ / ADMIN */
         .auth-container {
-            width: 100%; max-width: 380px; margin: auto;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
-            padding: 30px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
-            z-index: 100; color: white; box-sizing: border-box;
+            width: 100%; max-width: 380px; margin: auto; background: rgba(25, 25, 35, 0.95); 
+            padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
+            border: 1px solid #00C9FF; z-index: 100; color: white; box-sizing: border-box;
         }
-        .auth-header { text-align: center; font-size: 26px; font-weight: 700; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
-        .auth-tabs { display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: rgba(0,0,0,0.2); }
-        .auth-tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .auth-header { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 20px; color: #00C9FF; }
+        .auth-tabs { display: flex; margin-bottom: 20px; border-radius: 10px; overflow: hidden; background: #1a1a2e; }
+        .auth-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; font-size: 14px; transition: 0.3s; }
         .auth-tab.active { background: #00C9FF; color: #000; }
         
         .auth-form input {
-            width: 100%; padding: 14px; margin-bottom: 15px;
-            background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 10px; color: white; font-size: 16px; box-sizing: border-box; outline: none;
+            width: 100%; padding: 14px; margin-bottom: 15px; background: #1a1a2e; 
+            border: 1px solid #555; border-radius: 10px; color: white; font-size: 15px; box-sizing: border-box; outline: none;
         }
-        .btn-auth {
-            width: 100%; padding: 15px; background: #00C9FF; color: #000; border: none;
-            border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,201,255,0.4);
-        }
+        .btn-auth { width: 100%; padding: 15px; background: #00C9FF; color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
+
+        /* MÀN HÌNH QUẢN TRỊ ADMIN */
+        #adminApp { display: none; width: 100%; max-width: 420px; background: #1a1a2e; height: 100vh; flex-direction: column; color: white; }
+        .admin-header { background: #FF416C; padding: 20px; text-align: center; font-weight: 700; font-size: 20px; }
+        .order-list { padding: 20px; overflow-y: auto; flex: 1; }
+        .order-card { background: #2a2a4a; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #00C9FF; }
+        .order-card h4 { margin: 0 0 10px 0; color: #00C9FF; }
+        .order-card p { margin: 5px 0; font-size: 14px; }
+        .order-card .price { color: #38ef7d; font-weight: 700; font-size: 18px; margin-top: 10px; }
+        
         .leaflet-routing-container { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <!-- KHUNG ĐĂNG NHẬP CHUNG -->
     <div class="auth-container" id="authScreen">
-        <div class="auth-header">🚀 TÀI XẾ TRƯỜNG LÊ</div>
+        <div class="auth-header">🚀 HỆ THỐNG XE ÔM</div>
         <div class="auth-tabs">
-            <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Đăng Nhập</div>
+            <div class="auth-tab active" id="tabLogin" onclick="switchTab('login')">Khách Hàng</div>
             <div class="auth-tab" id="tabRegister" onclick="switchTab('register')">Đăng Ký</div>
+            <div class="auth-tab" id="tabAdmin" onclick="switchTab('admin')">Admin</div>
         </div>
 
+        <!-- Khách hàng đăng nhập -->
         <div class="auth-form" id="formLogin">
-            <input type="tel" id="loginPhone" placeholder="Số điện thoại" value="0987654321">
-            <input type="password" id="loginPass" placeholder="Mật khẩu" value="123456">
-            <button class="btn-auth" onclick="doLogin()">VÀO APP NGAY</button>
+            <input type="tel" id="loginPhone" placeholder="Số điện thoại của bạn" value="0987654321">
+            <button class="btn-auth" onclick="doLogin()">VÀO ĐẶT XE</button>
         </div>
 
+        <!-- Khách hàng đăng ký -->
         <div class="auth-form" id="formRegister" style="display: none;">
             <input type="text" id="regName" placeholder="Họ và tên">
             <input type="tel" id="regPhone" placeholder="Số điện thoại">
-            <!-- Khu vực nhập mã OTP -->
             <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="regOTP" placeholder="Mã xác nhận" style="margin-bottom: 0; flex: 1;">
-                <button id="btnOTP" style="background: #FF416C; color: white; border: none; border-radius: 10px; padding: 0 15px; font-weight: bold; cursor: pointer; transition: 0.3s;" onclick="sendOTP()">Gửi mã</button>
+                <input type="text" id="regOTP" placeholder="Mã xác nhận (Mô phỏng)" style="margin-bottom: 0; flex: 1;">
+                <button id="btnOTP" style="background: #FF416C; color: white; border: none; border-radius: 10px; padding: 0 15px; font-weight: bold; cursor: pointer;" onclick="sendOTP()">Gửi mã</button>
             </div>
-            <input type="password" id="regPass" placeholder="Mật khẩu">
             <button class="btn-auth" onclick="doRegister()">TẠO TÀI KHOẢN</button>
+        </div>
+
+        <!-- Chủ sở hữu đăng nhập -->
+        <div class="auth-form" id="formAdmin" style="display: none;">
+            <div style="text-align: center; margin-bottom: 15px; color: #FF416C; font-weight: bold;">Khu vực dành riêng cho Chủ Sở Hữu</div>
+            <input type="text" id="adminUser" placeholder="Tên đăng nhập" value="levantruong">
+            <input type="password" id="adminPass" placeholder="Mật khẩu bí mật">
+            <button class="btn-auth" style="background: #FF416C; color: white;" onclick="doAdminLogin()">VÀO TRANG QUẢN LÝ</button>
         </div>
     </div>
 
-    <!-- MÀN HÌNH APP CHÍNH -->
+    <!-- MÀN HÌNH ADMIN (CHỈ DÀNH CHO LÊ VĂN TRƯỜNG) -->
+    <div id="adminApp">
+        <div class="admin-header">TỔNG ĐÀI NHẬN CUỐC<br><span style="font-size: 14px; font-weight: normal;">Tài xế: Lê Văn Trường</span></div>
+        <div class="order-list" id="orderList">
+            <!-- Đơn hàng sẽ hiện ở đây -->
+        </div>
+        <button class="btn-auth" style="margin: 20px; width: calc(100% - 40px); background: #555; color: white;" onclick="location.reload()">Đăng xuất</button>
+    </div>
+
+    <!-- MÀN HÌNH KHÁCH HÀNG ĐẶT XE -->
     <div class="mobile-frame" id="mainApp">
         <div class="header">
             🚀 BẢN ĐỒ VỆ TINH VIP
             <span>Chủ sở hữu: Lê Văn Trường</span>
         </div>
 
+        <!-- Tối ưu: Dùng preferCanvas để bản đồ không bị lag -->
         <div id="map"></div>
 
-        <!-- Khung hoạt ảnh cá sấu đớp mồi -->
         <div id="crocAnimScreen">
             <div id="animFish">🐟</div>
             <div id="animCroc">🐊</div>
         </div>
 
-        <!-- Nút liên kết Zalo hỗ trợ -->
-        <a href="https://zaloapp.com/qr/p/qc0rgkdipkkf" target="_blank" class="zalo-btn">Zalo</a>
+        <a href="https://zaloapp.com/qr/p/qc0rgkdipkkf" target="_blank" class="zalo-btn">Zalo Hỗ Trợ</a>
 
         <div class="booking-panel" id="bookingPanel">
             <div class="input-group">
                 <label>📍 Chọn điểm đón:</label>
                 <select id="pickup" onchange="calculateRoute()">
                     <option value="">-- Chạm để chọn điểm đón --</option>
-                    <option value="gps" style="color: #00C9FF; font-weight: bold;">🛰️ Vị trí hiện tại của bạn</option>
                     <option value="21.0028,105.5244">🏢 Kí túc xá B-C</option>
                     <option value="21.0050,105.5230">🎓 Trường Đại học Việt Nhật - Xã Hòa Lạc</option>
                     <option value="20.9900,105.5280">⛽ Cây xăng 239</option>
@@ -255,6 +187,8 @@
                     <option value="21.0064,105.5270">📚 Giảng đường HT3</option>
                     <option value="21.0066,105.5275">📚 Giảng đường HT4</option>
                     <option value="21.0040,105.5270">💻 Trường Đại học Công nghệ - xã Hòa Lạc</option>
+                    <option value="21.0010,105.5200">🏛️ Cổng chính Đại học Quốc gia</option>
+                    <option value="21.0015,105.5280">⛩️ Cổng phụ Đại học Quốc gia</option>
                 </select>
             </div>
             
@@ -286,51 +220,59 @@
     </div>
 
     <script>
-        // --- 1. HOA ĐÀO RƠI ---
+        // --- 1. TỐI ƯU HOA ĐÀO (Giảm số lượng, tăng hiệu năng) ---
         function createPetals() {
             const petal = document.createElement('div');
             petal.innerHTML = '🌸';
             petal.classList.add('petal');
             petal.style.left = Math.random() * 100 + 'vw';
-            petal.style.animationDuration = (Math.random() * 3 + 4) + 's, ' + (Math.random() * 2 + 1) + 's';
+            petal.style.animationDuration = (Math.random() * 2 + 3) + 's, ' + (Math.random() * 2 + 1) + 's';
             document.body.appendChild(petal);
-            setTimeout(() => { petal.remove(); }, 7000);
+            setTimeout(() => { petal.remove(); }, 5000);
         }
-        setInterval(createPetals, 300);
+        setInterval(createPetals, 600); // Tăng thời gian sinh hoa để bớt giật
 
-        // --- 2. LOGIC ĐĂNG KÝ / OTP ---
+        // Biến lưu thông tin khách hàng hiện tại
+        let currentCustomerName = "Khách vãng lai";
+        let currentCustomerPhone = "";
+        let currentPrice = 0;
+
+        // --- 2. LOGIC CHUYỂN TAB VÀ ĐĂNG NHẬP ---
         function switchTab(tab) {
-            document.getElementById('tabLogin').classList.remove('active');
-            document.getElementById('tabRegister').classList.remove('active');
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.getElementById('formLogin').style.display = 'none';
             document.getElementById('formRegister').style.display = 'none';
+            document.getElementById('formAdmin').style.display = 'none';
+            
             if(tab === 'login') {
                 document.getElementById('tabLogin').classList.add('active');
                 document.getElementById('formLogin').style.display = 'block';
-            } else {
+            } else if(tab === 'register') {
                 document.getElementById('tabRegister').classList.add('active');
                 document.getElementById('formRegister').style.display = 'block';
+            } else {
+                document.getElementById('tabAdmin').classList.add('active');
+                document.getElementById('formAdmin').style.display = 'block';
             }
         }
 
-        // Gửi lại mã OTP
         function sendOTP() {
             var phone = document.getElementById('regPhone').value;
             if(phone.length < 9) { alert("Hãy nhập số điện thoại trước khi nhận mã!"); return; }
+            alert("Lưu ý: Để gửi SMS thật về điện thoại, bạn cần tích hợp API tổng đài (như Twilio) và có máy chủ Backend. Hiện tại hệ thống sẽ giả lập gửi mã để bạn xem trước giao diện!");
             var btn = document.getElementById('btnOTP');
-            btn.innerText = "Đã gửi!";
-            btn.style.background = "#27ae60";
-            
-            // Giả lập sau 5 giây cho phép gửi lại
-            setTimeout(() => {
-                btn.innerText = "Gửi lại mã";
-                btn.style.background = "#FF416C";
-            }, 5000); 
+            btn.innerText = "Đã gửi!"; btn.style.background = "#27ae60";
+            setTimeout(() => { btn.innerText = "Gửi lại mã"; btn.style.background = "#FF416C"; }, 5000); 
         }
 
-        function doLogin() { enterMainApp(); }
+        function doLogin() { 
+            currentCustomerPhone = document.getElementById('loginPhone').value;
+            enterMainApp(); 
+        }
 
         function doRegister() {
+            currentCustomerName = document.getElementById('regName').value;
+            currentCustomerPhone = document.getElementById('regPhone').value;
             let otp = document.getElementById('regOTP').value;
             if(otp === "") { alert("Vui lòng nhập mã xác nhận (OTP)!"); return; }
             alert("Đăng ký thành công!");
@@ -343,8 +285,47 @@
             setTimeout(() => { map.invalidateSize(); }, 300);
         }
 
-        // --- 3. BẢN ĐỒ VỆ TINH ---
-        var map = L.map('map', { zoomControl: false }).setView([21.0028, 105.5244], 15);
+        // --- 3. ĐĂNG NHẬP ADMIN VÀ QUẢN LÝ ĐƠN HÀNG ---
+        // (Lưu ý: Vì chưa có Database, đơn hàng tạm lưu vào bộ nhớ trình duyệt localStorage)
+        function doAdminLogin() {
+            let user = document.getElementById('adminUser').value;
+            let pass = document.getElementById('adminPass').value;
+            
+            // Tài khoản độc quyền của Lê Văn Trường (Mật khẩu tự đặt là: truong123)
+            if (user === "levantruong" && pass === "truong123") {
+                document.getElementById('authScreen').style.display = 'none';
+                document.getElementById('adminApp').style.display = 'flex';
+                renderAdminOrders();
+            } else {
+                alert("Tên đăng nhập hoặc mật khẩu quản trị không đúng!");
+            }
+        }
+
+        function renderAdminOrders() {
+            let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
+            let list = document.getElementById('orderList');
+            if (orders.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#888;'>Chưa có khách nào đặt xe.</p>";
+                return;
+            }
+            
+            list.innerHTML = "";
+            orders.reverse().forEach((order, index) => {
+                list.innerHTML += `
+                    <div class="order-card">
+                        <h4>🔴 Cuốc xe #${orders.length - index}</h4>
+                        <p>👤 <b>Tên khách:</b> ${order.name}</p>
+                        <p>📞 <b>SĐT:</b> ${order.phone}</p>
+                        <p>📍 <b>Đón:</b> ${order.pickup}</p>
+                        <p>🏁 <b>Đến:</b> ${order.dropoff}</p>
+                        <div class="price">💰 ${order.price} đ</div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. BẢN ĐỒ VỆ TINH (Đã bật preferCanvas chống lag) ---
+        var map = L.map('map', { zoomControl: false, preferCanvas: true }).setView([21.0028, 105.5244], 15);
         L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
             maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         }).addTo(map);
@@ -353,104 +334,82 @@
         var pickupMarker = null;
 
         function calculateRoute() {
-            var pickupVal = document.getElementById('pickup').value;
-            var dropoffVal = document.getElementById('dropoff').value;
+            var pickupSel = document.getElementById('pickup');
+            var dropoffSel = document.getElementById('dropoff');
             var infoBox = document.getElementById('info-box');
             var btnBook = document.getElementById('btnBook');
 
-            if (!pickupVal || !dropoffVal) {
+            if (!pickupSel.value || !dropoffSel.value) {
                 infoBox.style.display = 'none';
                 btnBook.style.display = 'none';
                 if (routingControl) map.removeControl(routingControl);
                 return;
             }
 
-            const drawMapRoute = (pLat, pLng, dLat, dLng) => {
-                if (routingControl) map.removeControl(routingControl);
-                if (pickupMarker) map.removeLayer(pickupMarker);
+            if (routingControl) map.removeControl(routingControl);
+            if (pickupMarker) map.removeLayer(pickupMarker);
 
-                var icon = L.divIcon({ html: '🟢', className: '', iconSize: [25, 25] });
-                pickupMarker = L.marker([pLat, pLng], {icon: icon}).addTo(map).bindPopup("Điểm đón của bạn").openPopup();
+            var pCoords = pickupSel.value.split(',');
+            var dCoords = dropoffSel.value.split(',');
+            var pLat = parseFloat(pCoords[0]), pLng = parseFloat(pCoords[1]);
+            var dLat = parseFloat(dCoords[0]), dLng = parseFloat(dCoords[1]);
 
-                routingControl = L.Routing.control({
-                    waypoints: [ L.latLng(pLat, pLng), L.latLng(dLat, dLng) ],
-                    lineOptions: { styles: [{ color: '#00C9FF', opacity: 0.9, weight: 6 }] },
-                    routeWhileDragging: false, addWaypoints: false, fitSelectedRoutes: true, show: false
-                }).addTo(map);
+            var icon = L.divIcon({ html: '🟢', className: '', iconSize: [25, 25] });
+            pickupMarker = L.marker([pLat, pLng], {icon: icon}).addTo(map).bindPopup("Điểm đón").openPopup();
 
-                routingControl.on('routesfound', function(e) {
-                    var distanceKm = (e.routes[0].summary.totalDistance / 1000).toFixed(1);
-                    var price = 15000; 
-                    if(distanceKm > 2) price += Math.ceil(distanceKm - 2) * 5000;
+            routingControl = L.Routing.control({
+                waypoints: [ L.latLng(pLat, pLng), L.latLng(dLat, dLng) ],
+                lineOptions: { styles: [{ color: '#00C9FF', opacity: 0.9, weight: 5 }] },
+                routeWhileDragging: false, addWaypoints: false, fitSelectedRoutes: true, show: false
+            }).addTo(map);
 
-                    infoBox.style.display = 'block';
-                    btnBook.style.display = 'block';
-                    document.getElementById('distance-km').innerText = distanceKm;
-                    document.getElementById('fare-price').innerText = price.toLocaleString('vi-VN') + ' đ';
-                });
-            };
-
-            var dropCoords = dropoffVal.split(',');
-            var dLat = parseFloat(dropCoords[0]);
-            var dLng = parseFloat(dropCoords[1]);
-
-            if (pickupVal === 'gps') {
-                btnBook.innerText = "ĐANG LẤY TỌA ĐỘ GPS...";
+            routingControl.on('routesfound', function(e) {
+                var distanceKm = (e.routes[0].summary.totalDistance / 1000).toFixed(1);
+                var price = 15000; 
+                if(distanceKm > 2) price += Math.ceil(distanceKm - 2) * 5000;
+                
+                currentPrice = price; // Lưu lại để gửi cho Admin
+                infoBox.style.display = 'block';
                 btnBook.style.display = 'block';
-                btnBook.style.background = "#f39c12";
-
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            btnBook.innerText = "ĐẶT XE NGAY";
-                            btnBook.style.background = "linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%)";
-                            drawMapRoute(position.coords.latitude, position.coords.longitude, dLat, dLng);
-                        },
-                        () => {
-                            alert("Bạn chưa cấp quyền Vị trí cho trình duyệt!");
-                            document.getElementById('pickup').value = ""; 
-                            btnBook.style.display = 'none';
-                        }
-                    );
-                }
-            } else {
-                var pickupCoords = pickupVal.split(',');
-                drawMapRoute(parseFloat(pickupCoords[0]), parseFloat(pickupCoords[1]), dLat, dLng);
-            }
+                document.getElementById('distance-km').innerText = distanceKm;
+                document.getElementById('fare-price').innerText = price.toLocaleString('vi-VN') + ' đ';
+            });
         }
 
-        // --- 4. HIỆU ỨNG CÁ SẤU ĐỚP CÁ KHI ĐẶT XE ---
+        // --- 5. ĐẶT XE & LƯU VÀO TRANG ADMIN & HOẠT ẢNH CÁ SẤU ---
         function triggerCrocAnimation() {
             var animScreen = document.getElementById('crocAnimScreen');
             var croc = document.getElementById('animCroc');
             var fish = document.getElementById('animFish');
             
-            // Hiện lớp nền tối
             animScreen.style.display = 'block';
-            croc.style.bottom = '-150px'; 
-            fish.style.display = 'block'; 
+            croc.style.bottom = '-150px'; fish.style.display = 'block'; 
             
-            // Cá sấu nhảy lên
-            setTimeout(() => {
-                croc.style.bottom = '35%'; 
-            }, 100);
+            setTimeout(() => { croc.style.bottom = '35%'; }, 100);
+            setTimeout(() => { fish.style.display = 'none'; croc.innerHTML = '🐊💦'; }, 400);
+            setTimeout(() => { croc.style.bottom = '-150px'; }, 800);
 
-            // Đớp cá (Cá biến mất, icon cá sấu thay đổi)
-            setTimeout(() => {
-                fish.style.display = 'none'; 
-                croc.innerHTML = '🐊💦';
-            }, 400);
-
-            // Cá sấu rơi xuống
-            setTimeout(() => {
-                croc.style.bottom = '-150px'; 
-            }, 800);
-
-            // Ẩn hoạt ảnh và báo thành công
             setTimeout(() => {
                 animScreen.style.display = 'none';
-                croc.innerHTML = '🐊'; // reset icon
-                alert('Đã chốt đơn! Tài xế Lê Văn Trường đang lao đến 🏍️💨');
+                croc.innerHTML = '🐊'; 
+                
+                // Lấy tên đường từ giao diện
+                var pickupText = document.getElementById('pickup').options[document.getElementById('pickup').selectedIndex].text;
+                var dropoffText = document.getElementById('dropoff').options[document.getElementById('dropoff').selectedIndex].text;
+
+                // Ghi nhận đơn hàng vào Local Storage để tài khoản Admin xem được
+                let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
+                orders.push({
+                    name: currentCustomerName,
+                    phone: currentCustomerPhone || "09xxx",
+                    pickup: pickupText,
+                    dropoff: dropoffText,
+                    price: currentPrice.toLocaleString('vi-VN')
+                });
+                localStorage.setItem('rideOrders', JSON.stringify(orders));
+
+                alert('Đã chốt đơn! Vui lòng vào mục Admin để xem thông báo đơn hàng vừa được gửi đến Chủ sở hữu Lê Văn Trường.');
+                location.reload(); // Tải lại web để khách khác dùng hoặc chuyển sang Admin
             }, 1200);
         }
     </script>
