@@ -44,14 +44,16 @@
             position: absolute; bottom: 0; width: 100%; 
             background: rgba(25, 25, 35, 0.95); padding: 25px 20px; 
             border-top: 2px solid #00C9FF; border-top-left-radius: 25px; border-top-right-radius: 25px;
-            box-sizing: border-box; z-index: 10; color: white;
+            box-sizing: border-box; z-index: 10; color: white; max-height: 85vh; overflow-y: auto;
         }
+        .booking-panel::-webkit-scrollbar { width: 4px; }
+        .booking-panel::-webkit-scrollbar-thumb { background: #00C9FF; border-radius: 5px; }
 
         .input-group { margin-bottom: 12px; }
         .input-group label { display: block; font-weight: 700; color: #00C9FF; margin-bottom: 5px;}
-        .input-group select { 
+        .input-group select, .input-group input { 
             width: 100%; padding: 12px; background: #1a1a2e; color: white;
-            border: 1px solid #00C9FF; border-radius: 12px; font-size: 15px; font-family: 'Quicksand'; outline: none;
+            border: 1px solid #00C9FF; border-radius: 12px; font-size: 15px; font-family: 'Quicksand'; outline: none; box-sizing: border-box;
         }
 
         .price-box { 
@@ -63,7 +65,11 @@
 
         .btn-book { 
             width: 100%; padding: 15px; background: linear-gradient(90deg, #FF416C 0%, #FF4B2B 100%); 
-            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; 
+            color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; margin-bottom: 10px;
+        }
+        .btn-history {
+            width: 100%; padding: 12px; background: transparent; border: 1px solid #00C9FF;
+            color: #00C9FF; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;
         }
 
         .zalo-btn {
@@ -80,14 +86,13 @@
         @keyframes fishDangle { from {transform: translateX(-50%) rotate(-15deg);} to {transform: translateX(-50%) rotate(15deg);} }
         #animCroc { position: absolute; bottom: -150px; left: 50%; transform: translateX(-50%); font-size: 100px; transition: bottom 0.2s ease-in; }
 
-        /* MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ (Có thanh cuộn để form đăng ký không bị lố màn hình) */
+        /* MÀN HÌNH ĐĂNG NHẬP / ĐĂNG KÝ */
         .auth-container {
             width: 100%; max-width: 380px; margin: auto; background: rgba(25, 25, 35, 0.95); 
             padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); 
             border: 1px solid #00C9FF; z-index: 100; color: white; box-sizing: border-box;
             max-height: 90vh; overflow-y: auto;
         }
-        /* Tùy chỉnh thanh cuộn đẹp hơn */
         .auth-container::-webkit-scrollbar { width: 6px; }
         .auth-container::-webkit-scrollbar-thumb { background: #00C9FF; border-radius: 10px; }
 
@@ -102,14 +107,27 @@
         }
         .btn-auth { width: 100%; padding: 15px; background: #00C9FF; color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
 
-        /* MÀN HÌNH QUẢN TRỊ ADMIN */
-        #adminApp { display: none; width: 100%; max-width: 420px; background: #1a1a2e; height: 100vh; flex-direction: column; color: white; }
-        .admin-header { background: #FF416C; padding: 20px; text-align: center; font-weight: 700; font-size: 20px; }
+        /* MÀN HÌNH QUẢN TRỊ ADMIN & LỊCH SỬ KHÁCH HÀNG */
+        #adminApp, #customerHistoryApp { 
+            display: none; width: 100%; max-width: 420px; background: #1a1a2e; height: 100vh; 
+            flex-direction: column; color: white; position: relative; z-index: 200; 
+        }
+        .admin-header { background: #FF416C; padding: 20px; text-align: center; font-weight: 700; font-size: 20px; position: relative;}
+        .history-header { background: #00C9FF; color: #000; padding: 20px; text-align: center; font-weight: 700; font-size: 20px; position: relative;}
+        .close-btn { position: absolute; left: 15px; top: 20px; font-size: 16px; cursor: pointer; font-weight: bold;}
+        
         .order-list { padding: 20px; overflow-y: auto; flex: 1; }
-        .order-card { background: #2a2a4a; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #00C9FF; }
-        .order-card h4 { margin: 0 0 10px 0; color: #00C9FF; }
-        .order-card p { margin: 5px 0; font-size: 14px; }
-        .order-card .price { color: #38ef7d; font-weight: 700; font-size: 18px; margin-top: 10px; }
+        .order-card { background: #2a2a4a; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #00C9FF; font-size: 14px;}
+        .order-card h4 { margin: 0 0 10px 0; color: #00C9FF; font-size: 16px; display: flex; justify-content: space-between;}
+        .order-card p { margin: 5px 0; }
+        .order-card .status { display: inline-block; padding: 3px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; margin-top: 5px;}
+        .status-waiting { background: #f39c12; color: #fff; }
+        .status-accepted { background: #38ef7d; color: #000; }
+        .status-cancelled { background: #e74c3c; color: #fff; }
+        .order-card .price { color: #38ef7d; font-weight: 700; font-size: 16px; margin-top: 10px; }
+        
+        .action-btn { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%;}
+        .accept-btn { background: #38ef7d; color: #000; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%;}
         
         .leaflet-routing-container { display: none !important; }
     </style>
@@ -125,14 +143,12 @@
             <div class="auth-tab" id="tabAdmin" onclick="switchTab('admin')">Admin</div>
         </div>
 
-        <!-- Khách hàng đăng nhập -->
         <div class="auth-form" id="formLogin">
             <input type="text" id="loginUser" placeholder="Số điện thoại hoặc Email">
             <input type="password" id="loginPass" placeholder="Mật khẩu">
             <button class="btn-auth" onclick="doLogin()">VÀO ĐẶT XE</button>
         </div>
 
-        <!-- Khách hàng đăng ký (Full form) -->
         <div class="auth-form" id="formRegister" style="display: none;">
             <input type="text" id="regName" placeholder="Họ và tên">
             <input type="tel" id="regPhone" placeholder="Số điện thoại">
@@ -148,25 +164,31 @@
             <button class="btn-auth" onclick="doRegister()">TẠO TÀI KHOẢN</button>
         </div>
 
-        <!-- Chủ sở hữu đăng nhập -->
         <div class="auth-form" id="formAdmin" style="display: none;">
             <div style="text-align: center; margin-bottom: 15px; color: #FF416C; font-weight: bold;">Khu vực cấm: Chỉ dành cho Chủ Sở Hữu</div>
-            <input type="text" id="adminUser" placeholder="Số điện thoại hoặc Email Admin">
+            <input type="text" id="adminUser" placeholder="SĐT: 0373208633 hoặc Email Admin">
             <input type="password" id="adminPass" placeholder="Mật khẩu bí mật">
             <button class="btn-auth" style="background: #FF416C; color: white;" onclick="doAdminLogin()">VÀO TRANG QUẢN LÝ</button>
         </div>
     </div>
 
-    <!-- MÀN HÌNH ADMIN (CHỈ DÀNH CHO LÊ VĂN TRƯỜNG) -->
+    <!-- MÀN HÌNH QUẢN TRỊ ADMIN (LÊ VĂN TRƯỜNG) -->
     <div id="adminApp">
         <div class="admin-header">TỔNG ĐÀI NHẬN CUỐC<br><span style="font-size: 14px; font-weight: normal;">Tài xế: Lê Văn Trường</span></div>
-        <div class="order-list" id="orderList">
-            <!-- Đơn hàng sẽ hiện ở đây -->
-        </div>
+        <div class="order-list" id="adminOrderList"></div>
         <button class="btn-auth" style="margin: 20px; width: calc(100% - 40px); background: #555; color: white;" onclick="location.reload()">Đăng xuất</button>
     </div>
 
-    <!-- MÀN HÌNH KHÁCH HÀNG ĐẶT XE -->
+    <!-- MÀN HÌNH XEM LỊCH SỬ ĐẶT XE (KHÁCH HÀNG) -->
+    <div id="customerHistoryApp">
+        <div class="history-header">
+            <span class="close-btn" onclick="closeHistory()">❮ Quay lại</span>
+            CUỐC XE CỦA BẠN
+        </div>
+        <div class="order-list" id="customerOrderList"></div>
+    </div>
+
+    <!-- MÀN HÌNH KHÁCH HÀNG ĐẶT XE CHÍNH -->
     <div class="mobile-frame" id="mainApp">
         <div class="header">
             🚀 BẢN ĐỒ VỆ TINH VIP
@@ -219,17 +241,24 @@
                 </select>
             </div>
 
+            <!-- Thêm ô ghi chú -->
+            <div class="input-group">
+                <label>📝 Ghi chú cho tài xế:</label>
+                <input type="text" id="orderNote" placeholder="Ví dụ: Đợi em ở cổng sau nhé...">
+            </div>
+
             <div id="info-box" class="price-box">
                 <p>Khoảng cách: <span id="distance-km">0</span> km</p>
                 <div class="price-text" id="fare-price">0 đ</div>
             </div>
 
             <button class="btn-book" id="btnBook" onclick="triggerCrocAnimation()" style="display: none;">ĐẶT XE NGAY</button>
+            <button class="btn-history" onclick="openCustomerHistory()">Xem cuốc đã đặt</button>
         </div>
     </div>
 
     <script>
-        // --- 1. HOA ĐÀO RƠI ---
+        // --- HOA ĐÀO RƠI ---
         function createPetals() {
             const petal = document.createElement('div');
             petal.innerHTML = '🌸';
@@ -241,11 +270,11 @@
         }
         setInterval(createPetals, 600);
 
-        let currentCustomerName = "Khách vãng lai";
+        let currentCustomerName = "Khách Hàng";
         let currentCustomerPhone = "";
         let currentPrice = 0;
 
-        // --- 2. LOGIC ĐĂNG KÝ, ĐĂNG NHẬP (KHÁCH & ADMIN) ---
+        // --- XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ ---
         function switchTab(tab) {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.getElementById('formLogin').style.display = 'none';
@@ -264,11 +293,10 @@
             }
         }
 
-        // Mô phỏng Zalo
         function sendOTPZalo() {
             var phone = document.getElementById('regPhone').value;
             if(phone.length < 9) { alert("Hãy nhập số điện thoại để nhận mã Zalo!"); return; }
-            alert("Đã gửi mã OTP đến Zalo số: " + phone + " (Nhập bừa 1 số để test)");
+            alert("Đã gửi mã OTP đến Zalo!");
             var btn = document.getElementById('btnOTP');
             btn.innerText = "Đã gửi!"; btn.style.background = "#27ae60";
             setTimeout(() => { btn.innerText = "Gửi lại"; btn.style.background = "#0068FF"; }, 5000); 
@@ -293,23 +321,24 @@
             if(!currentCustomerName || !currentCustomerPhone || !email || !pass) {
                 alert("Vui lòng điền đầy đủ tất cả thông tin!"); return;
             }
-            if(pass !== confirmPass) {
-                alert("Mật khẩu xác nhận không trùng khớp!"); return;
-            }
-            if(!otp) { 
-                alert("Vui lòng nhập mã xác nhận (OTP) Zalo!"); return; 
-            }
+            if(pass !== confirmPass) { alert("Mật khẩu xác nhận không trùng khớp!"); return; }
+            if(!otp) { alert("Vui lòng nhập mã xác nhận (OTP) Zalo!"); return; }
             
             alert("Đăng ký thành công tài khoản: " + currentCustomerName);
             enterMainApp();
         }
 
-        // BỨC TƯỜNG LỬA BẢO VỆ ADMIN
+        function enterMainApp() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+
+        // --- BẢO MẬT ADMIN LÊ VĂN TRƯỜNG ---
         function doAdminLogin() {
             let user = document.getElementById('adminUser').value.trim();
             let pass = document.getElementById('adminPass').value;
             
-            // Điều kiện khóa cứng: Chỉ duy nhất 2 username và pass được cấp quyền
             if ((user === "0373208633" || user === "lvantruong12072007@gmail.com") && pass === "30122004") {
                 document.getElementById('authScreen').style.display = 'none';
                 document.getElementById('adminApp').style.display = 'flex';
@@ -319,37 +348,113 @@
             }
         }
 
-        function enterMainApp() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'flex';
-            setTimeout(() => { map.invalidateSize(); }, 300);
+        // --- LOGIC ĐƠN HÀNG (TRẠNG THÁI, THỜI GIAN, HỦY, NHẬN) ---
+        function getStatusClass(status) {
+            if(status === "Đang tìm tài xế") return "status-waiting";
+            if(status === "Tài xế đang đến") return "status-accepted";
+            return "status-cancelled";
         }
 
-        // --- 3. QUẢN LÝ ĐƠN HÀNG ADMIN ---
         function renderAdminOrders() {
             let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
-            let list = document.getElementById('orderList');
+            let list = document.getElementById('adminOrderList');
             if (orders.length === 0) {
                 list.innerHTML = "<p style='text-align:center; color:#888;'>Chưa có khách nào đặt xe.</p>";
                 return;
             }
             
             list.innerHTML = "";
-            orders.reverse().forEach((order, index) => {
+            orders.reverse().forEach((order) => {
+                let acceptBtn = order.status === "Đang tìm tài xế" 
+                    ? `<button class="accept-btn" onclick="adminAcceptOrder(${order.id})">Tài xế Nhận Cuốc</button>` : "";
+                
+                let cancelInfo = order.cancelReason ? `<p style="color:#e74c3c;">⚠️ <b>Lý do hủy:</b> ${order.cancelReason}</p>` : "";
+
                 list.innerHTML += `
                     <div class="order-card">
-                        <h4>🔴 Đơn chốt #${orders.length - index}</h4>
-                        <p>👤 <b>Khách hàng:</b> ${order.name}</p>
-                        <p>📞 <b>Liên hệ:</b> ${order.phone}</p>
-                        <p>📍 <b>Đón tại:</b> ${order.pickup}</p>
+                        <h4>Mã đơn: #${order.id} <span class="status ${getStatusClass(order.status)}">${order.status}</span></h4>
+                        <p>🕒 <b>Thời gian:</b> ${order.time}</p>
+                        <p>👤 <b>Khách hàng:</b> ${order.name} - 📞 ${order.phone}</p>
+                        <p>📍 <b>Đón:</b> ${order.pickup}</p>
                         <p>🏁 <b>Đến:</b> ${order.dropoff}</p>
-                        <div class="price">💰 Giá cước: ${order.price} đ</div>
+                        <p>📝 <b>Ghi chú:</b> ${order.note || "Không có"}</p>
+                        ${cancelInfo}
+                        <div class="price">💰 ${order.price} đ</div>
+                        ${acceptBtn}
                     </div>
                 `;
             });
         }
 
-        // --- 4. BẢN ĐỒ VỆ TINH ---
+        function adminAcceptOrder(orderId) {
+            let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
+            let index = orders.findIndex(o => o.id === orderId);
+            if(index !== -1) {
+                orders[index].status = "Tài xế đang đến";
+                localStorage.setItem('rideOrders', JSON.stringify(orders));
+                renderAdminOrders();
+            }
+        }
+
+        function openCustomerHistory() {
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('customerHistoryApp').style.display = 'flex';
+            
+            let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
+            // Lọc ra đúng đơn của số điện thoại/email đang đăng nhập
+            let myOrders = orders.filter(o => o.phone === currentCustomerPhone);
+            let list = document.getElementById('customerOrderList');
+            
+            if (myOrders.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#888;'>Bạn chưa đặt cuốc xe nào.</p>";
+                return;
+            }
+
+            list.innerHTML = "";
+            myOrders.reverse().forEach((order) => {
+                let cancelBtn = (order.status === "Đang tìm tài xế" || order.status === "Tài xế đang đến") 
+                    ? `<button class="action-btn" onclick="customerCancelOrder(${order.id})">Hủy cuốc</button>` : "";
+                let cancelInfo = order.cancelReason ? `<p style="color:#e74c3c;">⚠️ <b>Lý do hủy:</b> ${order.cancelReason}</p>` : "";
+
+                list.innerHTML += `
+                    <div class="order-card">
+                        <h4>Mã đơn: #${order.id} <span class="status ${getStatusClass(order.status)}">${order.status}</span></h4>
+                        <p>🕒 <b>Thời gian:</b> ${order.time}</p>
+                        <p>📍 <b>Đón:</b> ${order.pickup}</p>
+                        <p>🏁 <b>Đến:</b> ${order.dropoff}</p>
+                        <p>📝 <b>Ghi chú:</b> ${order.note || "Không có"}</p>
+                        ${cancelInfo}
+                        <div class="price">💰 ${order.price} đ</div>
+                        ${cancelBtn}
+                    </div>
+                `;
+            });
+        }
+
+        function closeHistory() {
+            document.getElementById('customerHistoryApp').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex';
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+
+        function customerCancelOrder(orderId) {
+            let reason = prompt("⚠️ Vui lòng nhập lý do bạn muốn hủy cuốc xe này:");
+            if (reason === null || reason.trim() === "") {
+                alert("Bạn phải nhập lý do để hủy cuốc!"); return;
+            }
+            
+            let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
+            let index = orders.findIndex(o => o.id === orderId);
+            if(index !== -1) {
+                orders[index].status = "Đã hủy";
+                orders[index].cancelReason = reason;
+                localStorage.setItem('rideOrders', JSON.stringify(orders));
+                alert("Đã hủy cuốc thành công!");
+                openCustomerHistory(); // Tải lại giao diện lịch sử
+            }
+        }
+
+        // --- BẢN ĐỒ VỆ TINH ---
         var map = L.map('map', { zoomControl: false, preferCanvas: true }).setView([21.0028, 105.5244], 15);
         L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
             maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
@@ -401,7 +506,7 @@
             });
         }
 
-        // --- 5. ĐẶT XE & CHỐT ĐƠN VỀ ADMIN ---
+        // --- ĐẶT XE & LƯU TRỮ ---
         function triggerCrocAnimation() {
             var animScreen = document.getElementById('crocAnimScreen');
             var croc = document.getElementById('animCroc');
@@ -420,19 +525,34 @@
                 
                 var pickupText = document.getElementById('pickup').options[document.getElementById('pickup').selectedIndex].text;
                 var dropoffText = document.getElementById('dropoff').options[document.getElementById('dropoff').selectedIndex].text;
+                var noteText = document.getElementById('orderNote').value.trim();
+                
+                let now = new Date();
+                let timeString = now.toLocaleTimeString('vi-VN') + " - " + now.toLocaleDateString('vi-VN');
 
                 let orders = JSON.parse(localStorage.getItem('rideOrders')) || [];
                 orders.push({
+                    id: Math.floor(Math.random() * 9000) + 1000, // Tạo mã đơn ngẫu nhiên 4 số
+                    time: timeString,
                     name: currentCustomerName,
-                    phone: currentCustomerPhone,
+                    phone: currentCustomerPhone || "Chưa nhập SĐT",
                     pickup: pickupText,
                     dropoff: dropoffText,
-                    price: currentPrice.toLocaleString('vi-VN')
+                    note: noteText,
+                    price: currentPrice.toLocaleString('vi-VN'),
+                    status: "Đang tìm tài xế",
+                    cancelReason: ""
                 });
                 localStorage.setItem('rideOrders', JSON.stringify(orders));
 
-                alert('Đặt thành công! Vui lòng vào Tab Admin đăng nhập tài khoản Lê Văn Trường để kiểm tra thông báo đơn hàng vừa được đẩy về tổng đài.');
-                location.reload(); 
+                alert('Đặt cuốc thành công! Bạn có thể xem trạng thái đơn ở mục "Xem cuốc đã đặt".');
+                
+                // Reset form đặt xe
+                document.getElementById('pickup').value = "";
+                document.getElementById('dropoff').value = "";
+                document.getElementById('orderNote').value = "";
+                calculateRoute();
+                
             }, 1200);
         }
     </script>
